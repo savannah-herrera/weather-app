@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Site</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <style>
+        h1 {
+            margin-top: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            /* color: #FA9B8C; */
+            font-family: 'Sofia', cursive;
+        }
+    </style>
+</head>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-8">
+            <h1 id="weather-report">hello</h1>
+        </div>
+        <div class="col-sm-2">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-sm-6 align-self-center">
+            <input id="zip-input" type="text" class="form-control" placeholder="Enter Your Zip Code" required>
+        </div>
+        <div class="col-sm-2 align-self-center">
+            <button id="get-report" class="btn btn-primary" type="button">Get Weather Report</button>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<body>
+
+    <script>
+
+        //let getReport = document.getElementById('get-report');
+
+        // document.getElementById("get-report").addEventListener('click', getReport);
+
+        let report = new XMLHttpRequest();
+        report.addEventListener("load", function () {
+            //console.log('is this working?')
+            let weather = JSON.parse(this.responseText);
+            console.log(weather.main.temp, weather.main);
+            document.getElementById("weather-report").innerText = "It is " + weather.main.temp + " degrees " + " in " + weather.name;
+        });
+
+
+        report.open('GET', 'http://api.openweathermap.org/data/2.5/weather?zip=72202,us&appid=fa04b827816549d3d9247605f8844875&units=imperial');
+        //report.open('GET', 'http://api.openweathermap.org/data/2.5/weather?zip=72202,us&units=imperial');
+        report.send();
+
+    </script>
+</body>
+
+</html>
