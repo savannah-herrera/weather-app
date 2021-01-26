@@ -10,61 +10,146 @@
 
     <style>
         h1 {
-            margin-top: 2rem;
+            /* margin-top: 2rem; */
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             /* color: #FA9B8C; */
             font-family: 'Sofia', cursive;
+        }
+
+        body {
+            margin: 0 4rem;
+        }
+
+        .container {
+            background-color: white;
+            margin-top: 8rem;
+            padding: 4rem;
+        }
+
+        .cloudy {
+            background: rgb(236, 244, 244);
+            background: radial-gradient(circle, rgba(236, 244, 244, 1) 51%, rgba(255, 255, 255, 0.8958333333333334) 57%, rgba(118, 148, 150, 0.6502976190476191) 100%);
+        }
+
+        .clear {
+            background: rgb(255, 255, 255);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8958333333333334) 57%, rgba(8, 218, 236, 0.6502976190476191) 100%);
+        }
+
+        .thunderstorm {
+            background: rgb(2, 0, 36);
+            background: radial-gradient(circle, rgba(2, 0, 36, 0.84375) 1%, rgba(55, 55, 148, 0.8988095238095238) 21%, rgba(0, 212, 255, 1) 100%);
+        }
+
+        .drizzle {
+            background: rgb(120, 140, 140);
+            background: radial-gradient(circle, rgba(120, 140, 140, 1) 21%, rgba(255, 255, 255, 0.8958333333333334) 59%, rgba(118, 148, 150, 0.6502976190476191) 100%);
+        }
+
+        .snow {
+            background: rgb(227, 216, 221);
+            background: radial-gradient(circle, rgba(227, 216, 221, 1) 4%, rgba(226, 201, 212, 1) 19%, rgba(187, 204, 223, 1) 100%);
+        }
+
+        .tornado {
+            background: rgb(18, 1, 32);
+            background: radial-gradient(circle, rgba(18, 1, 32, 0.84375) 21%, rgba(82, 5, 144, 0.84375) 47%, rgba(55, 148, 70, 0.8988095238095238) 57%, rgba(74, 107, 80, 0.8988095238095238) 58%);
         }
     </style>
 </head>
 
+<body id="body">
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2">
+            </div>
+            <div class="col-sm-8">
+                <h1 id="weather-report"></h1>
+            </div>
+            <div class="col-sm-2">
+            </div>
         </div>
-        <div class="col-sm-8">
-            <h1 id="weather-report">hello</h1>
-        </div>
-        <div class="col-sm-2">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-sm-6 align-self-center">
+                <input id="zip-input" type="text" class="form-control" placeholder="Enter Your Zip Code" required>
+            </div>
+            <div class="col-sm-2 align-self-center">
+                <button id="get-report" class="btn btn-primary" type="button">Get Weather Report</button>
+            </div>
+            <div class="col">
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-        </div>
-        <div class="col-sm-6 align-self-center">
-            <input id="zip-input" type="text" class="form-control" placeholder="Enter Your Zip Code" required>
-        </div>
-        <div class="col-sm-2 align-self-center">
-            <button id="get-report" class="btn btn-primary" type="button">Get Weather Report</button>
-        </div>
-        <div class="col">
-        </div>
-    </div>
-</div>
 
-<body>
+
 
     <script>
 
         //let getReport = document.getElementById('get-report');
 
-        // document.getElementById("get-report").addEventListener('click', getReport);
+        getReport(59830);
 
-        let report = new XMLHttpRequest();
-        report.addEventListener("load", function () {
-            //console.log('is this working?')
-            let weather = JSON.parse(this.responseText);
-            console.log(weather.main.temp, weather.main);
-            document.getElementById("weather-report").innerText = "It is " + weather.main.temp + " degrees " + " in " + weather.name;
+        document.getElementById("get-report").addEventListener('click', function () {
+            getReport(document.getElementById("zip-input").value);
+
         });
 
+        function getReport(zipcode) {
+            // let getReport = document.getElementById('get-report');
 
-        report.open('GET', 'http://api.openweathermap.org/data/2.5/weather?zip=72202,us&appid=fa04b827816549d3d9247605f8844875&units=imperial');
-        //report.open('GET', 'http://api.openweathermap.org/data/2.5/weather?zip=72202,us&units=imperial');
-        report.send();
+            // console.log('getting the temperature...' + getReport.value);
 
+            //  first attempt
+            // let report = new XMLHttpRequest();
+            // report.addEventListener("load", function () {
+            //     //console.log('is this working?')
+            //     let weather = JSON.parse(this.responseText);
+            //     console.log(weather.main.temp, weather.main, weather.value);
+            //     document.getElementById("weather-report").innerText = "It is " + weather.main.temp + " degrees " + " in " + weather.name;
+
+            let reportReq = new XMLHttpRequest();
+            reportReq.addEventListener("load", function (event) {
+                //console.log('is this working?')
+                let response = JSON.parse(event.currentTarget.response);
+                console.log(response);
+
+                let output = document.getElementById("weather-report");
+                output.innerText = response.name + " is currently " + Math.ceil(response.main.temp) + " degrees with " + response.weather[0].main;
+
+                if (response.weather[0].main == 'Clouds') {
+                    document.getElementById('body').classList.add('cloudy');
+                }
+
+                if (response.weather[0].main == 'Clear') {
+                    document.getElementById('body').classList.add('clear');
+                }
+
+                if (response.weather[0].main == 'Thunderstorm') {
+                    document.getElementById('body').classList.add('thunderstorm');
+                }
+
+                if (response.weather[0].main == 'Drizzle') {
+                    document.getElementById('body').classList.add('drizzle');
+                }
+
+                if (response.weather[0].main == 'Snow') {
+                    document.getElementById('body').classList.add('snow');
+                }
+
+                if (response.weather[0].main == 'Tornado') {
+                    document.getElementById('body').classList.add('tornado');
+                }
+            });
+
+
+            reportReq.open("GET", "https://api.openweathermap.org/data/2.5/weather?zip=" + zipcode + ",us&appid=fa04b827816549d3d9247605f8844875&units=imperial");
+            //report.open('GET', 'http://api.openweathermap.org/data/2.5/weather?zip=72202,us&units=imperial');
+            reportReq.send();
+        }
     </script>
 </body>
 
